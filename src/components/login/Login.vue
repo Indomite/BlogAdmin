@@ -48,10 +48,13 @@ export default {
       this.$refs.loginFormRef.validate(async valid => {
         if (!valid) return
         const res = await this.$http.post('/user/login', this.loginForm)
-        console.log(res)
-        if (res.code !== 200) return this.$message.error('登陆失败')
+        // console.log(res)
+        if (res.data.code !== 200) {
+          console.log(11)
+          return this.$message.error('登陆失败')
+        }
         this.$message.success('登录成功')
-        window.sessionStorage.setItem('token', res.data.token)
+        // window.sessionStorage.setItem('token', res.data.token)
         this.$router.push('/home')
       })
     }
