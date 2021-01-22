@@ -5,7 +5,7 @@
           <!-- 菜单栏 -->
           <el-col :span="12">
           <div class="logoImg">
-            <img src="../../assets/logo.jpg" alt="">
+            <img src="../../assets/Homyit.png" alt="">
           </div>
           <el-menu
             default-active="2"
@@ -17,7 +17,7 @@
             active-text-color="#ffd04b">
             <el-menu-item index="1">
               <i class="el-icon-menu"></i>
-              <span slot="title">导航二</span>
+              <span slot="title">首页</span>
             </el-menu-item>
             <el-submenu index="2">
               <template slot="title">
@@ -29,8 +29,27 @@
                 <el-menu-item index="2-1">选项1</el-menu-item>
                 <el-menu-item index="2-2">选项2</el-menu-item>
               </el-menu-item-group>
-              <el-menu-item-group title="分组2">
-                <el-menu-item index="1-3">选项3</el-menu-item>
+            </el-submenu>
+            <el-submenu index="3">
+              <template slot="title">
+                <i class="el-icon-location"></i>
+                <span>导航一</span>
+              </template>
+              <el-menu-item-group>
+                <template slot="title">分组一</template>
+                <el-menu-item index="3-1">选项1</el-menu-item>
+                <el-menu-item index="3-2">选项2</el-menu-item>
+              </el-menu-item-group>
+            </el-submenu>
+            <el-submenu index="4">
+              <template slot="title">
+                <i class="el-icon-location"></i>
+                <span>导航一</span>
+              </template>
+              <el-menu-item-group>
+                <template slot="title">分组一</template>
+                <el-menu-item index="4-1">选项1</el-menu-item>
+                <el-menu-item index="4-2">选项2</el-menu-item>
               </el-menu-item-group>
             </el-submenu>
           </el-menu>
@@ -59,10 +78,10 @@ export default {
 
 <style lang='less' scoped>
 .logoImg{
-  align-items: center;
-  background-color: transparent;
+  text-align: center;
   > img {
-    height: 56px;
+    height: 40px;
+    padding: 8px;
   }
 }
 .homeContainer {
