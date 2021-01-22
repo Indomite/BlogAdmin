@@ -14,39 +14,40 @@
             @close="handleClose"
             background-color="#545c64"
             text-color="#fff"
-            active-text-color="#ffd04b">
-            <el-menu-item index="1">
+            active-text-color="#ffd04b"
+            router>
+            <el-menu-item index="/home">
               <i class="el-icon-s-home"></i>
               <span slot="title" :display="isCollapse ? 'none':'inline'">首页</span>
             </el-menu-item>
-            <el-submenu index="2">
+            <el-submenu index="/users">
               <template slot="title">
                 <i class="el-icon-user-solid"></i>
                 <span>用户信息</span>
               </template>
               <el-menu-item-group>
-                <el-menu-item index="2-1">用户列表</el-menu-item>
+                <el-menu-item index="/users">用户列表</el-menu-item>
               </el-menu-item-group>
             </el-submenu>
-            <el-submenu index="3">
+            <el-submenu index="/article">
               <template slot="title">
                 <i class="el-icon-document"></i>
                 <span>文章信息</span>
               </template>
               <el-menu-item-group>
-                <el-menu-item index="3-1">文章列表</el-menu-item>
+                <el-menu-item index="/article">文章列表</el-menu-item>
               </el-menu-item-group>
             </el-submenu>
-            <el-submenu index="4">
+            <el-submenu index="/cate">
               <template slot="title">
                 <i class="el-icon-menu"></i>
                 <span>分类信息</span>
               </template>
               <el-menu-item-group>
-                <el-menu-item index="4-1">分类列表</el-menu-item>
+                <el-menu-item index="/cate">分类列表</el-menu-item>
               </el-menu-item-group>
             </el-submenu>
-            <el-menu-item index="5">
+            <el-menu-item index="/setting">
               <i class="el-icon-s-tools"></i>
               <span>网站配置</span>
             </el-menu-item>
