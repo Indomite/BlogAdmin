@@ -1,7 +1,7 @@
 <template>
     <el-container class="homeContainer">
       <!-- 侧边栏 -->
-        <el-aside width="200px">
+        <el-aside :width="isCollapse ? '64px':'200px'">
           <!-- 菜单栏 -->
           <el-col :span="12">
           <div class="logoImg">
@@ -17,7 +17,7 @@
             active-text-color="#ffd04b">
             <el-menu-item index="1">
               <i class="el-icon-s-home"></i>
-              <span slot="title">首页</span>
+              <span slot="title" :display="isCollapse ? 'none':'inline'">首页</span>
             </el-menu-item>
             <el-submenu index="2">
               <template slot="title">
@@ -57,7 +57,7 @@
           <!-- 头部 -->
           <el-header>
             <i :class="isCollapse ? 'el-icon-s-unfold':'el-icon-s-fold'" @click="toggleCollapse"></i>
-            <el-button type="primary">退出</el-button>
+            <el-button type="primary" @click="loginOut">退出</el-button>
           </el-header>
           <!-- 主体 -->
           <el-main>
@@ -70,6 +70,22 @@
 
 <script>
 export default {
+  data () {
+    return {
+      // 菜单是否收缩
+      isCollapse: false
+    }
+  },
+  methods: {
+    // 退出
+    loginOut () {
+      window.sessionStorage.clear()
+      this.$router.push('/login')
+    },
+    toggleCollapse () {
+      this.isCollapse = !this.isCollapse
+    }
+  }
 }
 
 </script>
@@ -100,4 +116,14 @@ export default {
 .el-main {
   background: #eee;
 }
+
+.el-icon-s-fold,
+.el-icon-s-unfold {
+  display: block;
+  padding: 10px;
+  color: #409EFF;
+  cursor: pointer;
+  transform: scale(1.5);
+}
+
 </style>
