@@ -10,7 +10,7 @@
       <!-- 输入框 -->
       <el-row>
         <el-col>
-          <el-button type="primary">添加分类</el-button>
+          <el-button type="primary" @click="showAddCateDialog">添加分类</el-button>
         </el-col>
       </el-row>
       <el-table border stripe>
@@ -37,11 +37,46 @@
         :total="100">
       </el-pagination>
     </el-card>
+    <!-- 添加分类的对话框 -->
+    <el-dialog
+      title="添加分类"
+      :visible.sync="addCateDialogVisible"
+      width="50%">
+      <!-- 添加分类的表单 -->
+      <el-form :model="addCateForm" :rules="addCateFormRules" ref="addCateFormRef" label-width="300px">
+        <el-form-item label="父级分类：">
+          <el-cascader
+            expand-trigger="hover"
+            v-model="selectedKeys"
+            :options="parentCateList"
+            :props="cascaderProps"
+            @change="parentCateChanged"
+            clearable
+            change-on-select>
+          </el-cascader>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="addCateDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="addCate">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 export default {
+  data () {
+    return {
+      addCateDialogVisible: false
+    }
+  },
+  methods: {
+    // 点击按钮战术对话框
+    showAddCateDialog () {
+      this.addCateDialogVisible = true
+    }
+  }
 }
 
 </script>

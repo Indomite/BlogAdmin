@@ -10,7 +10,7 @@
       <!-- 输入框 -->
       <el-row>
         <el-col>
-          <el-button type="primary">添加用户</el-button>
+          <el-button type="primary" @click="addDialogVisible = true">添加用户</el-button>
         </el-col>
       </el-row>
       <el-table border stripe>
@@ -37,12 +37,48 @@
         layout="total, sizes, prev, pager, next, jumper"
         :total="100">
       </el-pagination>
+      <!-- 对话框 -->
+      <el-dialog
+        title="添加用户"
+        :visible.sync="addDialogVisible"
+        @close="addDialogClosed"
+        width="50%">
+        <el-form ref="addFormRef" :model="addForm" :rules="addFormRules" label-width="70px">
+          <el-form-item label="用户名" prop="username">
+            <el-input></el-input>
+          </el-form-item>
+          <el-form-item label="密码" prop="password">
+            <el-input></el-input>
+          </el-form-item>
+          <el-form-item label="邮箱" prop="email">
+            <el-input></el-input>
+          </el-form-item>
+          <el-form-item label="权限" prop="role">
+            <el-input></el-input>
+          </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="addDialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="addUser">确 定</el-button>
+        </span>
+      </el-dialog>
     </el-card>
   </div>
 </template>
 
 <script>
 export default {
+  data () {
+    return {
+      addDialogVisible: false
+    }
+  },
+  methods: {
+    // 监听添加用户对话框的关闭事件
+    addDialogClosed () {
+      this.$refs.addFormRef.resetFields()
+    }
+  }
 }
 
 </script>
