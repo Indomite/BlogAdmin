@@ -19,7 +19,7 @@
           <el-input v-model="addForm.tag_id"></el-input>
         </el-form-item>
         <el-form-item label="内容" prop="content">
-          <el-input v-model="addForm.content"></el-input>
+          <quill-editor v-model="addForm.content"></quill-editor>
         </el-form-item>
       </el-form>
       <el-button type="primary" @click="addArticle">确 定</el-button>

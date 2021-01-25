@@ -26,3 +26,7 @@ html,body,#app {
 .el-table td, .el-table th {
     text-align: center;
 }
+
+.ql-editor {
+    min-height: 250px;   
+}
