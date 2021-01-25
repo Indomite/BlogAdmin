@@ -10,7 +10,7 @@
       <!-- 输入框 -->
       <el-row :gutter="20">
         <el-col :span="4">
-          <el-button type="primary">添加文章</el-button>
+          <el-button type="primary" @click="goAddpage">添加文章</el-button>
         </el-col>
         <el-col :span="8">
           <el-input
@@ -93,18 +93,9 @@ export default {
       this.queryInfo.pagenum = newPage
       this.getArticleList()
     },
-    // 添加用户对话框
-    addArticle () {
-      this.$refs.addFormRef.validate(async valid => {
-        if (!valid) return
-        const { data: res } = await this.$http.post('article', this.addForm)
-        if (res.code !== 200) {
-          this.$message.error('添加用户失败')
-        }
-        this.$message.success('添加用户成功')
-        this.addDialogVisible = false
-        this.getArticleList()
-      })
+    // 添加文章页面
+    goAddpage () {
+      this.$router.push('article/add')
     }
   }
 }

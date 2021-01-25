@@ -5,6 +5,7 @@ import Home from '../components/home/Home.vue'
 import Welcome from '../components/Welcome.vue'
 import Users from '../components/users/Users.vue'
 import Article from '../components/article/Article.vue'
+import Add from '../components/article/Add.vue'
 import Cate from '../components/cate/Cate.vue'
 import Setting from '../components/website/Setting.vue'
 
@@ -22,6 +23,7 @@ const router = new VueRouter({
         { path: '/welcome', component: Welcome },
         { path: '/users', component: Users },
         { path: '/article', component: Article },
+        { path: '/article/add', component: Add },
         { path: '/cate', component: Cate },
         { path: '/setting', component: Setting }
       ]
