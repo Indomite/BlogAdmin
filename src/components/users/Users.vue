@@ -52,7 +52,7 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="queryInfo.pagenum"
-        :page-sizes="[1, 10, 20, 50]"
+        :page-sizes="[5, 10, 20, 50]"
         :page-size="queryInfo.pagesize"
         layout="total, sizes, prev, pager, next, jumper"
         :total="total">
@@ -65,16 +65,13 @@
         width="50%">
         <el-form ref="addFormRef" :model="addForm" :rules="addFormRules" label-width="70px">
           <el-form-item label="用户名" prop="username">
-            <el-input></el-input>
+            <el-input v-model="addForm.username"></el-input>
           </el-form-item>
           <el-form-item label="密码" prop="password">
-            <el-input></el-input>
+            <el-input type="password" v-model="addForm.password"></el-input>
           </el-form-item>
           <el-form-item label="邮箱" prop="email">
-            <el-input></el-input>
-          </el-form-item>
-          <el-form-item label="权限" prop="role">
-            <el-input></el-input>
+            <el-input v-model="addForm.email"></el-input>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -159,14 +156,13 @@ export default {
     addUser () {
       this.$refs.addFormRef.validate(async valid => {
         if (!valid) return
-        const { data: res } = await this.$http.post('users', this.addForm)
-        if (res.meta.status !== 201) {
+        const { data: res } = await this.$http.post('user', this.addForm)
+        if (res.code !== 200) {
           this.$message.error('添加用户失败')
         }
         this.$message.success('添加用户成功')
         this.addDialogVisible = false
         this.getUserList()
-        // console.log(valid)
       })
     }
   }
