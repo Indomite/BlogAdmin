@@ -8,21 +8,36 @@
     <!-- 卡片视图 -->
     <el-card>
       <!-- 输入框 -->
-      <el-row>
-        <el-col>
+      <el-row :gutter="20">
+        <el-col :span="4">
           <el-button type="primary">添加文章</el-button>
         </el-col>
+        <el-col :span="8">
+          <el-input
+            v-model="queryInfo.query"
+            placeholder="请输入内容"
+            class="input-with-select"
+            clearable
+            @clear="getArticleList">
+            <el-button @click="getArticleList" slot="append" icon="el-icon-search"></el-button>
+          </el-input>
+        </el-col>
       </el-row>
-      <el-table border stripe>
+      <el-table :data="articleList" border stripe>
         <el-table-column type="index"></el-table-column>
         <el-table-column label="标题" prop="headline"></el-table-column>
+        <el-table-column label="作者" prop="tag_id"></el-table-column>
         <el-table-column label="标签" prop="tag_id"></el-table-column>
-        <el-table-column label="状态" prop="status"></el-table-column>
-        <el-table-column label="操作" width="300px">
+        <el-table-column label="状态" prop="status">
+          <template slot-scope="scope">
+            <el-tag type="success" v-if="scope.row.status === '1'">未锁定</el-tag>
+            <el-tag type="danger" v-else-if="scope.row.status === '0'">锁定</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="200px">
           <template>
             <el-button size="mini" type="primary" icon="el-icon-edit">编辑</el-button>
             <el-button size="mini" type="danger" icon="el-icon-delete">删除</el-button>
-            <el-button size="mini" type="warning" icon="el-icon-setting">分配权限</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -30,11 +45,11 @@
       <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page="currentPage4"
+        :current-page="queryInfo.pagenum"
         :page-sizes="[5, 10, 20, 50]"
-        :page-size="100"
+        :page-size="queryInfo.pagesize"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="100">
+        :total="total">
       </el-pagination>
     </el-card>
   </div>
@@ -42,6 +57,56 @@
 
 <script>
 export default {
+  data () {
+    return {
+      queryInfo: {
+        query: '',
+        pagenum: 1,
+        pagesize: 5
+      },
+      total: 0,
+      articleList: []
+    }
+  },
+  created () {
+    this.getArticleList()
+  },
+  methods: {
+    // 获取文章信息
+    async getArticleList () {
+      const { data: res } = await this.$http.get('article', { params: this.queryInfo })
+      console.log(res)
+      if (res.code !== 200) return this.$message.error('用户列表获取失败')
+      this.articleList = res.data
+      this.total = res.data.length
+      console.log(res.data)
+    },
+    // 监听页码的变化
+    handleSizeChange (newSize) {
+      console.log(newSize)
+      this.queryInfo.pagesize = newSize
+      this.getArticleList()
+    },
+    // 监听页码值的变化
+    handleCurrentChange (newPage) {
+      console.log(newPage)
+      this.queryInfo.pagenum = newPage
+      this.getArticleList()
+    },
+    // 添加用户对话框
+    addArticle () {
+      this.$refs.addFormRef.validate(async valid => {
+        if (!valid) return
+        const { data: res } = await this.$http.post('article', this.addForm)
+        if (res.code !== 200) {
+          this.$message.error('添加用户失败')
+        }
+        this.$message.success('添加用户成功')
+        this.addDialogVisible = false
+        this.getArticleList()
+      })
+    }
+  }
 }
 
 </script>
