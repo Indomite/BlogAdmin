@@ -41,9 +41,8 @@
           </template>
         </el-table-column>
         <el-table-column label="操作" width="240px">
-          <template>
-            <el-button size="mini" type="primary" icon="el-icon-edit">编辑</el-button>
-            <el-button size="mini" type="danger" icon="el-icon-delete">删除</el-button>
+          <template slot-scope="scope">
+            <el-button size="mini" type="primary" icon="el-icon-edit" @click="showEditDialog(scope.row.id)">编辑</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -57,7 +56,8 @@
         layout="total, sizes, prev, pager, next, jumper"
         :total="total">
       </el-pagination>
-      <!-- 对话框 -->
+    </el-card>
+    <!-- 添加用户对话框 -->
       <el-dialog
         title="添加用户"
         :visible.sync="addDialogVisible"
@@ -79,7 +79,31 @@
           <el-button type="primary" @click="addUser">确 定</el-button>
         </span>
       </el-dialog>
-    </el-card>
+      <!-- 编辑用户对话框 -->
+      <el-dialog
+        title="编辑用户"
+        :visible.sync="editDialogVisible"
+        @close="editDialogVisible"
+        width="50%">
+        <el-form ref="editFormRef" :model="editForm" :rules="editFormRules" label-width="70px">
+          <el-form-item label="用户名" prop="username">
+            <el-input v-model="editForm.username"></el-input>
+          </el-form-item>
+          <el-form-item label="密码" prop="password">
+            <el-input type="password" v-model="editForm.password"></el-input>
+          </el-form-item>
+          <el-form-item label="邮箱" prop="email">
+            <el-input v-model="editForm.email"></el-input>
+          </el-form-item>
+          <el-form-item label="状态" prop="status">
+            <el-input v-model="editForm.status"></el-input>
+          </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="editDialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="editUser">确 定</el-button>
+        </span>
+      </el-dialog>
   </div>
 </template>
 
@@ -102,13 +126,34 @@ export default {
       userList: [],
       total: 0,
       addDialogVisible: false,
+      editDialogVisible: false,
       addForm: {
         username: '',
         password: '',
-        email: '',
-        mobile: ''
+        email: ''
       },
       addFormRules: {
+        username: [
+          { required: true, message: '请输入用户名', trigger: 'blur' },
+          { min: 5, max: 10, message: '长度在5-10个字符', trigger: 'blur' }
+        ],
+        password: [
+          { required: true, message: '请输入密码', trigger: 'blur' },
+          { min: 6, max: 15, message: '长度在6-15个字符', trigger: 'blur' }
+        ],
+        email: [
+          { required: true, message: '请输入邮箱', trigger: 'blur' },
+          { validator: checkEmail, trigger: 'blur' }
+        ]
+      },
+      editForm: {
+        id: '',
+        username: '',
+        password: '',
+        email: '',
+        status: ''
+      },
+      editFormRules: {
         username: [
           { required: true, message: '请输入用户名', trigger: 'blur' },
           { min: 5, max: 10, message: '长度在5-10个字符', trigger: 'blur' }
@@ -162,6 +207,27 @@ export default {
         }
         this.$message.success('添加用户成功')
         this.addDialogVisible = false
+        this.getUserList()
+      })
+    },
+    async showEditDialog (id) {
+      // console.log(id)
+      this.editForm.id = id
+      this.editDialogVisible = true
+    },
+    editDialogClosed () {
+      this.$refs.editFormRef.resetFields()
+    },
+    editUser (id) {
+      this.$refs.editFormRef.validate(async valid => {
+        if (!valid) return
+        const { data: res } = await this.$http.put('user' + this.editForm.id)
+        console.log(res)
+        if (res.code !== 200) {
+          this.$message.error('修改用户失败')
+        }
+        this.$message.success('修改用户成功')
+        this.editDialogVisible = false
         this.getUserList()
       })
     }
