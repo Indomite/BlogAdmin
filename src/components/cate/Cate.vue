@@ -14,7 +14,7 @@
         </el-col>
         <el-col :span="8">
           <el-input
-            v-model="queryInfo.query"
+            v-model="queryInfo.keyword"
             placeholder="请输入内容"
             class="input-with-select"
             clearable
@@ -45,9 +45,9 @@
       <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page="queryInfo.pagenum"
+        :current-page="queryInfo.pageIndex"
         :page-sizes="[5, 10, 20, 50]"
-        :page-size="queryInfo.pagesize"
+        :page-size="queryInfo.pageSize"
         layout="total, sizes, prev, pager, next, jumper"
         :total="total">
       </el-pagination>
@@ -79,9 +79,9 @@ export default {
   data () {
     return {
       queryInfo: {
-        query: '',
-        pagenum: 1,
-        pagesize: 1
+        keyword: '',
+        pageIndex: 1,
+        pageSize: 5
       },
       tagList: [],
       total: 0,
@@ -110,21 +110,19 @@ export default {
     // 获取用户信息
     async getTagList () {
       const { data: res } = await this.$http.get('tag', { params: this.queryInfo })
-      if (res.code !== 200) return this.$message.error('用户列表获取失败')
-      this.tagList = res.data
-      this.total = res.data.length
-      // console.log(res.data)
+      console.log(res)
+      if (res.status !== 200) return this.$message.error('用户列表获取失败')
+      this.tagList = res.data.data
+      this.total = res.data.totalCount
     },
     // 监听页码的变化
     handleSizeChange (newSize) {
-      // console.log(newSize)
-      this.queryInfo.pagesize = newSize
+      this.queryInfo.pageSize = newSize
       this.getTagList()
     },
     // 监听页码值的变化
     handleCurrentChange (newPage) {
-      // console.log(newPage)
-      this.queryInfo.pagenum = newPage
+      this.queryInfo.pageIndex = newPage
       this.getTagList()
     },
     // 添加标签对话框
@@ -133,9 +131,9 @@ export default {
         if (!valid) return
         const { data: res } = await this.$http.post('tag', this.addForm)
         if (res.code !== 200) {
-          this.$message.error('添加用户失败')
+          this.$message.error('添加标签失败')
         }
-        this.$message.success('添加用户成功')
+        this.$message.success('添加标签成功')
         this.addDialogVisible = false
         this.getTagList()
       })

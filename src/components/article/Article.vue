@@ -14,7 +14,7 @@
         </el-col>
         <el-col :span="8">
           <el-input
-            v-model="queryInfo.query"
+            v-model="queryInfo.keyword"
             placeholder="请输入内容"
             class="input-with-select"
             clearable
@@ -45,9 +45,9 @@
       <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page="queryInfo.pagenum"
+        :current-page="queryInfo.pageIndex"
         :page-sizes="[5, 10, 20, 50]"
-        :page-size="queryInfo.pagesize"
+        :page-size="queryInfo.pageSize"
         layout="total, sizes, prev, pager, next, jumper"
         :total="total">
       </el-pagination>
@@ -60,9 +60,9 @@ export default {
   data () {
     return {
       queryInfo: {
-        query: '',
-        pagenum: 1,
-        pagesize: 5
+        keyword: '',
+        pageIndex: 1,
+        pageSize: 5
       },
       total: 0,
       articleList: []
@@ -75,22 +75,20 @@ export default {
     // 获取文章信息
     async getArticleList () {
       const { data: res } = await this.$http.get('article', { params: this.queryInfo })
-      console.log(res)
-      if (res.code !== 200) return this.$message.error('用户列表获取失败')
-      this.articleList = res.data
-      this.total = res.data.length
-      console.log(res.data)
+      if (res.status !== 200) return this.$message.error('用户列表获取失败')
+      this.articleList = res.data.data
+      this.total = res.data.totalCount
     },
     // 监听页码的变化
     handleSizeChange (newSize) {
       console.log(newSize)
-      this.queryInfo.pagesize = newSize
+      this.queryInfo.pageSize = newSize
       this.getArticleList()
     },
     // 监听页码值的变化
     handleCurrentChange (newPage) {
       console.log(newPage)
-      this.queryInfo.pagenum = newPage
+      this.queryInfo.pageIndex = newPage
       this.getArticleList()
     },
     // 添加文章页面
