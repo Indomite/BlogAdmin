@@ -35,9 +35,8 @@
           </template>
         </el-table-column>
         <el-table-column label="操作" width="240px">
-          <template>
-            <el-button size="mini" type="primary" icon="el-icon-edit">编辑</el-button>
-            <el-button size="mini" type="danger" icon="el-icon-delete">删除</el-button>
+          <template slot-scope="scope">
+            <el-button size="mini" type="primary" icon="el-icon-edit" @click="showEditDialog(scope.row.id)">编辑</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -51,7 +50,7 @@
         layout="total, sizes, prev, pager, next, jumper"
         :total="total">
       </el-pagination>
-      <!-- 对话框 -->
+      <!-- 添加对话框 -->
       <el-dialog
         title="添加分类"
         :visible.sync="addDialogVisible"
@@ -70,6 +69,35 @@
           <el-button type="primary" @click="addTag">确 定</el-button>
         </span>
       </el-dialog>
+      <!-- 编辑对话框 -->
+      <el-dialog
+        title="编辑分类"
+        :visible.sync="editDialogVisible"
+        @close="editDialogClosed"
+        width="50%">
+        <el-form ref="editFormRef" :model="editForm" :rules="editFormRules" label-width="70px">
+          <el-form-item label="类别" prop="name">
+            <el-input v-model="editForm.name"></el-input>
+          </el-form-item>
+          <el-form-item label="描述" prop="description">
+            <el-input v-model="editForm.description"></el-input>
+          </el-form-item>
+          <el-form-item label="状态" prop="status">
+            <el-select v-model="editForm.status" placeholder="请选择">
+              <el-option
+                v-for="item in statusOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="editDialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="editTag">确 定</el-button>
+        </span>
+      </el-dialog>
     </el-card>
   </div>
 </template>
@@ -86,17 +114,26 @@ export default {
       tagList: [],
       total: 0,
       addDialogVisible: false,
-      addForm: {
-        username: '',
-        password: '',
-        email: '',
-        mobile: ''
-      },
+      editDialogVisible: false,
+      addForm: {},
+      editForm: {},
       addFormRules: {
         name: [
           { required: true, message: '请输入标签名', trigger: 'blur' }
         ]
-      }
+      },
+      editFormRules: {
+        name: [
+          { required: true, message: '请输入标签名', trigger: 'blur' }
+        ]
+      },
+      statusOptions: [{
+        value: '1',
+        label: '未锁定'
+      }, {
+        value: '0',
+        label: '锁定'
+      }]
     }
   },
   created () {
@@ -107,6 +144,9 @@ export default {
     addDialogClosed () {
       this.$refs.addFormRef.resetFields()
     },
+    editDialogClosed () {
+      this.$refs.editFormRef.resetFields()
+    },
     // 获取用户信息
     async getTagList () {
       const { data: res } = await this.$http.get('tag', { params: this.queryInfo })
@@ -114,6 +154,7 @@ export default {
       if (res.status !== 200) return this.$message.error('用户列表获取失败')
       this.tagList = res.data.data
       this.total = res.data.totalCount
+      // console.log(res.data)
     },
     // 监听页码的变化
     handleSizeChange (newSize) {
@@ -130,11 +171,34 @@ export default {
       this.$refs.addFormRef.validate(async valid => {
         if (!valid) return
         const { data: res } = await this.$http.post('tag', this.addForm)
-        if (res.code !== 200) {
+        if (res.status !== 200) {
           this.$message.error('添加标签失败')
+        } else {
+          this.$message.success('添加标签成功')
         }
-        this.$message.success('添加标签成功')
         this.addDialogVisible = false
+        this.getTagList()
+      })
+    },
+    async showEditDialog (id) {
+      const { data: res } = await this.$http.get('tag/' + id)
+      console.log(res.data)
+      if (res.status !== 200) return
+      this.editForm = res.data
+      this.editDialogVisible = true
+    },
+    // 编辑标签对话框
+    editTag () {
+      this.$refs.editFormRef.validate(async valid => {
+        if (!valid) return
+        console.log(this.editForm.id)
+        const { data: res } = await this.$http.put('tag/' + this.editForm.id, this.addForm)
+        if (res.status !== 200) {
+          this.$message.error('编辑标签失败')
+        } else {
+          this.$message.success('编辑标签成功')
+        }
+        this.editDialogVisible = false
         this.getTagList()
       })
     }

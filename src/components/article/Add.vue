@@ -43,10 +43,6 @@ export default {
           { required: true, message: '请输入标题', trigger: 'blur' },
           { min: 5, max: 20, message: '长度在5-20个字符', trigger: 'blur' }
         ],
-        outline: [
-          { required: true, message: '请输入描述', trigger: 'blur' },
-          { min: 6, max: 30, message: '长度在6-30个字符', trigger: 'blur' }
-        ],
         tag_id: [
           { required: true, message: '请选择标签', trigger: 'blur' }
         ],
@@ -62,9 +58,8 @@ export default {
         if (!valid) {
           return this.$message.error('请填写必要的信息')
         }
-        // 添加商品
         const { data: res } = await this.$http.post('article', this.addForm)
-        if (res.code !== 200) {
+        if (res.status !== 200) {
           return this.$message.error('提交数据失败')
         }
         this.$message.success('提交数据成功')

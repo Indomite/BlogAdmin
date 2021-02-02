@@ -8,9 +8,12 @@
             </div>
           <el-menu
             default-active="2"
-            background-color="#545c64"
+            background-color="#293238"
             text-color="#fff"
             active-text-color="#ffd04b"
+            unique-opened
+            :collapse="isCollapse"
+            :collapse-transition="false"
             router>
             <el-menu-item index="/home">
               <i class="el-icon-s-home"></i>
@@ -100,7 +103,10 @@ export default {
 }
 
 .el-aside {
-  background: #344766;
+  background: #343e46;
+  .el-menu {
+    border: none;
+  }
 }
 
 .el-main {

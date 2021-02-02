@@ -27,8 +27,9 @@
         <el-table-column label="邮箱" prop="email"></el-table-column>
         <el-table-column label="权限" prop="role_id">
           <template slot-scope="scope">
-            <el-tag type="warning" v-if="scope.row.role_id === 20">管理员</el-tag>
-            <el-tag type="success" v-else-if="scope.row.role_id === 10">用户</el-tag>
+            <el-tag type="warning" v-if="scope.row.role_id === 30">超级管理员</el-tag>
+            <el-tag type="primary" v-if="scope.row.role_id === 20">管理员</el-tag>
+            <el-tag type="success" v-else-if="scope.row.role_id === 10">普通用户</el-tag>
           </template>
         </el-table-column>
         <el-table-column label="状态" prop="status">
@@ -58,7 +59,7 @@
       <el-dialog
         title="编辑用户"
         :visible.sync="editDialogVisible"
-        @close="editDialogVisible"
+        @close="editDialogClosed"
         width="50%">
         <el-form ref="editFormRef" :model="editForm" :rules="editFormRules" label-width="70px">
           <el-form-item label="用户名" prop="username">
@@ -70,10 +71,20 @@
           <el-form-item label="邮箱" prop="email">
             <el-input v-model="editForm.email"></el-input>
           </el-form-item>
+          <el-form-item label="权限" prop="role_id">
+            <el-select v-model="editForm.role_id" placeholder="请选择">
+              <el-option
+                v-for="item in roleOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </el-form-item>
           <el-form-item label="状态" prop="status">
             <el-select v-model="editForm.status" placeholder="请选择">
               <el-option
-                v-for="item in options"
+                v-for="item in statusOptions"
                 :key="item.value"
                 :label="item.label"
                 :value="item.value">
@@ -123,14 +134,23 @@ export default {
           { validator: checkEmail, trigger: 'blur' }
         ]
       },
-      options: [{
+      statusOptions: [{
         value: '1',
         label: '未锁定'
       }, {
         value: '0',
         label: '锁定'
       }],
-      value: ''
+      roleOptions: [{
+        value: '10',
+        label: '普通用户'
+      }, {
+        value: '20',
+        label: '管理员'
+      }, {
+        value: '30',
+        label: '超级管理员'
+      }]
     }
   },
   created () {
@@ -163,12 +183,11 @@ export default {
     editDialogClosed () {
       this.$refs.editFormRef.resetFields()
     },
-    editUser (id) {
+    editUser () {
       this.$refs.editFormRef.validate(async valid => {
         if (!valid) return
-        const { data: res } = await this.$http.put('user' + this.editForm.id)
-        console.log(res)
-        if (res.code !== 200) {
+        const { data: res } = await this.$http.put('user/' + this.editForm.id, this.editForm)
+        if (res.status !== 200) {
           this.$message.error('修改用户信息失败')
         }
         this.$message.success('修改用户信息成功')

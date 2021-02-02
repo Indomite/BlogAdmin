@@ -35,9 +35,9 @@
           </template>
         </el-table-column>
         <el-table-column label="操作" width="200px">
-          <template>
+          <template slot-scope="scope">
             <el-button size="mini" type="primary" icon="el-icon-edit">编辑</el-button>
-            <el-button size="mini" type="danger" icon="el-icon-delete">删除</el-button>
+            <el-button size="mini" type="danger" icon="el-icon-delete" @click="removeUserById(scope.row.id)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -81,14 +81,31 @@ export default {
     },
     // 监听页码的变化
     handleSizeChange (newSize) {
-      console.log(newSize)
       this.queryInfo.pageSize = newSize
       this.getArticleList()
     },
     // 监听页码值的变化
     handleCurrentChange (newPage) {
-      console.log(newPage)
       this.queryInfo.pageIndex = newPage
+      this.getArticleList()
+    },
+    async removeUserById (id) {
+      const confirmResult = await this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).catch(err => {
+        return err
+      })
+      if (confirmResult !== 'confirm') {
+        this.$message.info('已取消')
+        return
+      }
+      const { data: res } = await this.$http.delete('article/' + id)
+      if (res.status !== 200) {
+        this.$message.error('删除文章失败')
+      }
+      this.$message.success('删除文章成功')
       this.getArticleList()
     },
     // 添加文章页面
