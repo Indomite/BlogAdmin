@@ -8,8 +8,8 @@
     <!-- 卡片视图 -->
     <el-card>
       <!-- 输入框 -->
-      <el-row :gutter="6">
-        <el-col :span="6">
+      <el-row :gutter="8">
+        <el-col :span="8">
           <el-input
             v-model="queryInfo.keyword"
             placeholder="请输入内容"
@@ -37,7 +37,7 @@
             <el-tag type="danger" v-else-if="scope.row.status === '0'">锁定</el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="240px">
+        <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button size="mini" type="primary" icon="el-icon-edit" @click="showEditDialog(scope.row.id)">编辑</el-button>
           </template>
@@ -62,7 +62,7 @@
         width="50%">
         <el-form ref="editFormRef" :model="editForm" :rules="editFormRules" label-width="70px">
           <el-form-item label="用户名" prop="username">
-            <el-input v-model="editForm.username"></el-input>
+            <el-input v-model="editForm.username" disabled></el-input>
           </el-form-item>
           <el-form-item label="密码" prop="password">
             <el-input type="password" v-model="editForm.password"></el-input>
@@ -71,7 +71,14 @@
             <el-input v-model="editForm.email"></el-input>
           </el-form-item>
           <el-form-item label="状态" prop="status">
-            <el-input v-model="editForm.status"></el-input>
+            <el-select v-model="editForm.status" placeholder="请选择">
+              <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -101,13 +108,7 @@ export default {
       userList: [],
       total: 0,
       editDialogVisible: false,
-      editForm: {
-        id: '',
-        username: '',
-        password: '',
-        email: '',
-        status: ''
-      },
+      editForm: {},
       editFormRules: {
         username: [
           { required: true, message: '请输入用户名', trigger: 'blur' },
@@ -121,17 +122,21 @@ export default {
           { required: true, message: '请输入邮箱', trigger: 'blur' },
           { validator: checkEmail, trigger: 'blur' }
         ]
-      }
+      },
+      options: [{
+        value: '1',
+        label: '未锁定'
+      }, {
+        value: '0',
+        label: '锁定'
+      }],
+      value: ''
     }
   },
   created () {
     this.getUserList()
   },
   methods: {
-    // 监听添加用户对话框的关闭事件
-    addDialogClosed () {
-      this.$refs.addFormRef.resetFields()
-    },
     // 获取用户信息
     async getUserList () {
       const { data: res } = await this.$http.get('user', { params: this.queryInfo })
@@ -150,7 +155,9 @@ export default {
       this.getUserList()
     },
     async showEditDialog (id) {
-      this.editForm.id = id
+      const { data: res } = await this.$http.get('user/' + id)
+      if (res.status !== 200) return
+      this.editForm = res.data
       this.editDialogVisible = true
     },
     editDialogClosed () {
@@ -159,7 +166,7 @@ export default {
     editUser (id) {
       this.$refs.editFormRef.validate(async valid => {
         if (!valid) return
-        const { data: res } = await this.$http.put('user/' + this.editForm.id)
+        const { data: res } = await this.$http.put('user' + this.editForm.id)
         console.log(res)
         if (res.code !== 200) {
           this.$message.error('修改用户信息失败')
