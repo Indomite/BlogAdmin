@@ -150,11 +150,9 @@ export default {
     // 获取用户信息
     async getTagList () {
       const { data: res } = await this.$http.get('tag', { params: this.queryInfo })
-      console.log(res)
       if (res.status !== 200) return this.$message.error('用户列表获取失败')
       this.tagList = res.data.data
       this.total = res.data.totalCount
-      // console.log(res.data)
     },
     // 监听页码的变化
     handleSizeChange (newSize) {
@@ -171,8 +169,11 @@ export default {
       this.$refs.addFormRef.validate(async valid => {
         if (!valid) return
         const { data: res } = await this.$http.post('tag', this.addForm)
-        if (res.status !== 200) {
-          this.$message.error('添加标签失败')
+        if (res.status === 403) {
+          this.$message.error('标签已存在')
+          return
+        } else if (res.status !== 200) {
+          this.$message.success('添加标签失败')
         } else {
           this.$message.success('添加标签成功')
         }
@@ -182,7 +183,6 @@ export default {
     },
     async showEditDialog (id) {
       const { data: res } = await this.$http.get('tag/' + id)
-      console.log(res.data)
       if (res.status !== 200) return
       this.editForm = res.data
       this.editDialogVisible = true
@@ -191,7 +191,6 @@ export default {
     editTag () {
       this.$refs.editFormRef.validate(async valid => {
         if (!valid) return
-        console.log(this.editForm.id)
         const { data: res } = await this.$http.put('tag/' + this.editForm.id, this.addForm)
         if (res.status !== 200) {
           this.$message.error('编辑标签失败')
