@@ -2,17 +2,30 @@
   <div class="login_container">
     <div class="login_box">
       <!-- 表单区域 -->
-      <el-form ref="loginFormRef" :model="loginForm" :rules="loginFormRules" class="login_form">
+      <el-form
+        ref="loginFormRef"
+        :model="loginForm"
+        :rules="loginFormRules"
+        class="login_form"
+      >
         <!-- 用户名密码 -->
         <el-form-item prop="username">
-          <el-input v-model="loginForm.username" prefix-icon="el-icon-user"></el-input>
+          <el-input
+            v-model="loginForm.username"
+            prefix-icon="el-icon-user"
+          ></el-input>
         </el-form-item>
         <el-form-item prop="password">
-          <el-input v-model="loginForm.password" prefix-icon="el-icon-lock" type="password"></el-input>
+          <el-input
+            v-model="loginForm.password"
+            prefix-icon="el-icon-lock"
+            type="password"
+            @keyup.enter.native="login"
+          ></el-input>
         </el-form-item>
         <!-- 按钮  -->
         <el-form-item class="btns">
-          <el-button type="primary" @click="login">登录</el-button>
+          <el-button type="primary" @click="login" @keyup.enter.native="login">登录</el-button>
           <el-button type="info" @click="resetLoginForm">重置</el-button>
         </el-form-item>
       </el-form>
@@ -61,23 +74,25 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.login_container{
-  background-color: #2b4b6b;
+.login_container {
+  background: url("../../assets/background.jpg") no-repeat;
+  background-size: cover;
   height: 100%;
 }
 
 .login_box {
-  width: 450px;
-  height: 220px;
-  background: #fff;
+  min-width: 300px;
+  min-height: 220px;
+  background: rgba(0, 0, 0, 0.4);
   border-radius: 3px;
   position: absolute;
   left: 50%;
-  top: 50%;
+  top: 60%;
   transform: translate(-50%, -50%);
 }
 
 .btns {
+  width: 100%;
   display: flex;
   justify-content: space-between;
 }
@@ -86,8 +101,7 @@ export default {
   position: absolute;
   bottom: 0;
   width: 100%;
-  padding: 20px;
+  padding: 0 20px 0;
   box-sizing: border-box;
 }
-
 </style>

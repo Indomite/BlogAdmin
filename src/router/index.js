@@ -12,6 +12,7 @@ import Setting from '../components/website/Setting.vue'
 Vue.use(VueRouter)
 
 const router = new VueRouter({
+  base: '/admin/',
   routes: [
     { path: '/', redirect: '/login' },
     { path: '/login', component: Login },
